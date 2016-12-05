@@ -32,10 +32,30 @@ cd my-app
 mvn sonar:sonar
 ```
 
-Po zakończeniu przechodzimy na stronę _http://localhost:9000_ i powinnismy zobaczyć gotowy raport. Tym, co nas początku najbardziej nas interesuje są _smrodki_ czyli Code Smells:
+Po zakończeniu przechodzimy na stronę _http://localhost:9000_ i powinnismy zobaczyć gotowy raport. Tym, co nz as początku najbardziej nas interesuje są _smrodki_ znalezione w kodzie czyli Code Smells:
 
+![2016-12-05-sonarqube1.png]({{site.baseurl}}/img/2016-12-05-sonarqube1.png)
 
+Ja możemy zobaczyć, w tak niewielkim fragmencie kodu, SonarQube namierzył aż trzy naruszenia! Nawigując po interfejsie mozemy przenazalizować okoliczności, w jakis zostało wprodzadzone każde naruszenie oraz zapoznać się z bardzo szczegółową dokumentacją. Każdy zdiagnozowany problem ma nie tylko opisaną przyczynę zakwalifikowania go jako Code Smell ale także przykłady i instrukcje, jak takie naruszenie można z kodu wyeliminować. I to właśnie tutaj ukryte są niezgłębione pokłady wiedzy na temat filozofii czystego kodu.
 
-##Praktyka
+Należy w tym momencie zaznaczyć, że przedstawiona powyżej metoda jest odpowiednia do lokalnej metody analizy kodu. Jeśli zdecydujemy się wdrożyć w projekcie SonaQube jako narzędzie używane przez wielu programistów, warto poswięcić trochę czasu i skonfigurować przynajmniej takie elementy jak uwierzytelnianie, autoryzacja oraz dedykowana baza danych.
+
+##Środowisko developerskie
+
+Przeglądanie raportów i statystyk projektu pozostawmy jednak w gestii managerów. To, czego potrzebują programiści to integracji na poziomie środowiska IDE, możliwie jak nabliżej kodu. I tutaj z pomocą przychodzi nam plugin SonarLint, dostępny na wszystkie liczące się środowiska programistyczne. Wystraczy, że wskażemy mu serwer:
+
+![2016-12-05-sonarqube2.png]({{site.baseurl}}/img/2016-12-05-sonarqube2.png)
+
+Powiążemy bierzący projekt z projektem założonym na serwerze:
+
+![2016-12-05-sonarqube3.png]({{site.baseurl}}/img/2016-12-05-sonarqube3.png)
+
+Jeśli integracja przebiegnie poprawnie, wszystkie naruszenia na serwerze powinny zostać naniesione na plik otwarty w edytorze:
+
+![2016-12-05-sonarqube4.png]({{site.baseurl}}/img/2016-12-05-sonarqube4.png)
+
 ##Podsumowanie
-Zachęcam każdego, aby uruchomił lokalnie SonarQube i przeskanował swoje projekty (o ile jeszcze tego nie robi). Wiedza, jaka płynie z takiej operacji jest nie do przecenienia.
+Zachęcam każdego, aby uruchomił lokalnie SonarQube i przeskanował swoje projekty (o ile jeszcze tego nie robi). Wiedza, jaka płynie z takiej operacji jest nie do przecenienia. Jeżeli zainteresuje was ten sposób analizy kody, warto zgłębić inne funkcjonalności jakie posiada SonarQube. Znajdziemy tam między innymi: 
+* analizę pokrycia kodu testami
+* wykrywanie copy'n'paste
+* złożoność cyklomatyczną
