@@ -1,6 +1,6 @@
 ---
 layout: post
-published: false
+published: true
 title: Sonarqube - wprowadzenie do statycznej analizy kodu
 tags:
   - craftsmanship
