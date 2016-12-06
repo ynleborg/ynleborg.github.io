@@ -66,4 +66,6 @@ Zachęcam każdego, aby uruchomił lokalnie SonarQube i przeskanował swoje proj
 * wykrywanie copy'n'paste
 * złożoność cyklomatyczną
 
+## Bibliografia
+
 ![2016-12-05-sonarqube-logo.png]({{site.baseurl}}/img/2016-12-05-sonarqube-logo.png)
