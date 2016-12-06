@@ -71,7 +71,7 @@ Zachęcam każdego, aby uruchomił lokalnie SonarQube i przeskanował swoje proj
 
 ## Bibliografia
 
-* Robert C. Martin _Clean Code_
+* Robert C. Martin, _Clean Code_.
 * https://hub.docker.com/_/sonarqube/
 * https://about.sonarqube.com/get-started/
 
