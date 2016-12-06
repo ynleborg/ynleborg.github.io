@@ -5,6 +5,9 @@ title: Sonarqube - wprowadzenie do statycznej analizy kodu
 tags:
   - craftsmanship
 ---
+
+> “It is not enough for code to work.” Robert C. Martin, Clean Code
+
 Pamiętam jak kilka lat temu z uporem maniaka integrowałem biblioteki statycznej analizy kodu do każdego pom.xml, który wpadł w moje ręce. Do dzisiaj wiele osób za to mnie szczerze nienawidzi. Modyfikacja pomów, konfiguracja komitowana do repozytorium i długie instrukcje na wiki związane z integracją IDE. Patrząc z perspektywy czasu przyznaję, że był to dość pracochłonne przedsięwzięcie. Na szczęście pojawiło się narzędzie, które nie tylko uprościło proces statycznej analizy kodu, ale także znacznie tę analizę upowszechniło.
 
 ## Konfiguracja
@@ -35,7 +38,7 @@ cd my-app
 mvn sonar:sonar
 ```
 
-Po zakończeniu przechodzimy na stronę _http://localhost:9000_ i powinniśmy zobaczyć gotowy raport. Tym, co nas na początku najbardziej interesuje są _smrodki_ znalezione w kodzie czyli Code Smells:
+Po zakończeniu przechodzimy na stronę _localhost:9000_ i powinniśmy zobaczyć gotowy raport. Tym, co nas na początku najbardziej interesuje są _smrodki_ znalezione w kodzie czyli Code Smells:
 
 ![2016-12-05-sonarqube1.png]({{site.baseurl}}/img/2016-12-05-sonarqube1.png)
 
@@ -67,5 +70,10 @@ Zachęcam każdego, aby uruchomił lokalnie SonarQube i przeskanował swoje proj
 * złożoność cyklomatyczną
 
 ## Bibliografia
+
+* Robert C. Martin _Clean Code_
+* https://hub.docker.com/_/sonarqube/
+* https://about.sonarqube.com/get-started/
+
 
 ![2016-12-05-sonarqube-logo.png]({{site.baseurl}}/img/2016-12-05-sonarqube-logo.png)
