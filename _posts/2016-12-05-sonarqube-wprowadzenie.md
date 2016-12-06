@@ -8,10 +8,10 @@ tags:
 
 > “It is not enough for code to work.” Robert C. Martin, Clean Code
 
-Pamiętam jak kilka lat temu z uporem maniaka integrowałem biblioteki statycznej analizy kodu do każdego pom.xml, który wpadł w moje ręce. Do dzisiaj wiele osób za to mnie szczerze nienawidzi. Modyfikacja pomów, konfiguracja komitowana do repozytorium i długie instrukcje na wiki związane z integracją IDE. Patrząc z perspektywy czasu przyznaję, że był to dość pracochłonne przedsięwzięcie. Na szczęście pojawiło się narzędzie, które nie tylko uprościło proces statycznej analizy kodu, ale także znacznie tę analizę upowszechniło.
+Pamiętam jak kilka lat temu z uporem maniaka integrowałem biblioteki statycznej analizy kodu do każdego pom.xml, który wpadł w moje ręce. Do dzisiaj wiele osób za to mnie szczerze nienawidzi. Modyfikacja pomów, konfiguracja w repozytorium każdego projektu i długie instrukcje na wiki związane z integracją IDE. Patrząc z perspektywy czasu przyznaję, że był to dość pracochłonne przedsięwzięcie. Na szczęście pojawiło się narzędzie, które nie tylko uprościło proces statycznej analizy kodu, ale także znacznie tę analizę upowszechniło.
 
 ## Konfiguracja
-SonarQube, bo o nim mowa, powstał jako narzędzie do integracji raportów z różnych bibliotek i wizualizacji wyników. Twórcy byli rozczarowani tempem zmian w popularnych bibliotekach statycznej analizy kodu, dlatego zaczęli na własną rękę przygotowywać zestaw reguł, które ich zdaniem powinien spełniać dobry kod. W wyniku tego procesu dostaliśmy kompleksowe narzędzie do zbierania analiz i raportowania jakościowych zmian projektu w czasie. 
+SonarQube, bo o nim mowa, powstał jako system do integracji raportów z różnych bibliotek i wizualizacji wyników. Twórcy byli rozczarowani tempem zmian w popularnych bibliotekach statycznej analizy kodu, dlatego zaczęli na własną rękę przygotowywać zestaw reguł, które ich zdaniem powinien spełniać dobry kod. W wyniku tego procesu dostaliśmy kompleksowe narzędzie do zbierania analiz i raportowania jakościowych zmian projektu w czasie. 
 
 W erze przeddokerowej, takie wprowadzenie zajęłoby pewnie kilka ekranów poleceń i czynności konfiguracyjnych. Ja pokażę, że cały proces konfiguracji i pierwszego użycia można zamknąć w 4 poleceniach, z których jedno to zmiana bieżącego katalogu.
 
@@ -25,7 +25,7 @@ Następnie potrzebujemy projekt, który poddamy analizie. Dla celów pokazowych 
 
 ```bash
 mvn archetype:generate 
-	-DgroupId=com.mycompany.app 
+    -DgroupId=com.mycompany.app 
     -DartifactId=my-app 
     -DarchetypeArtifactId=maven-archetype-quickstart 
     -DinteractiveMode=false
@@ -37,6 +37,8 @@ Na koniec pozostaje nam zmienić katalog i uruchomić analizę:
 cd my-app
 mvn sonar:sonar
 ```
+
+(Ostatnie polecenie zadziała w takiej formie wyłącznie na systemach operacyjnych, w których Docker uruchamiany jest natywnie, czyli na chwilę powstawania tego wpisu Linux i Windows 10. W pozostałych przypadkach konieczne jest przekazanie w parametrach namiarów na Dockera ukrytego pod warstwą wirtualizacji. Więcej szczegółów znajdziecie w linkach załączonych na końcu wpisu.)
 
 Po zakończeniu przechodzimy na stronę _localhost:9000_ i powinniśmy zobaczyć gotowy raport. Tym, co nas na początku najbardziej interesuje są _smrodki_ znalezione w kodzie czyli Code Smells:
 
@@ -61,6 +63,8 @@ Jeśli integracja przebiegnie poprawnie, wszystkie naruszenia na serwerze powinn
 ![2016-12-05-sonarqube4.png]({{site.baseurl}}/img/2016-12-05-sonarqube4.png)
 
 I to w zasadzie wszystko co jest nam potrzebne, aby zacząć przygodę ze statyczną analizą kodu źródłowego naszych aplikacji.
+
+Uncle Bob nieprzypadkowo pojawił się na początku tego wpisu. Opisywane tutaj narzędzia są naturalnym rozszerzeniem idei czystego kodu. Grzegorz Huber, kolega z pracy, podzielił się ze mną bardzo trafną uwagą - SonarQube w IDE to prawie tak, jak Uncle Bob siedzący na krzesełku obok.
 
 ## Podsumowanie
 Zachęcam każdego, aby uruchomił lokalnie SonarQube i przeskanował swoje projekty (o ile jeszcze tego nie robi). Wiedza, jaka płynie z takiej operacji jest nie do przecenienia. Jeżeli zainteresuje was ten sposób analizy kodu, warto zgłębić inne funkcjonalności jakie posiada SonarQube. Znajdziemy tam między innymi:
