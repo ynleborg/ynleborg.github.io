@@ -1,12 +1,18 @@
-
-Robot Photon - recenzja.
-
+---
+layout: post
+published: true
+title: Robot Photon - recenzja
+tags:
+  - robot,toys
+---
+![2017-09-25-photon.jpg]({{site.baseurl}}/img/2017-09-25-photon.jpg)
 
 Na samym wstępie chciałbym zaznaczyć, że opisuję moje pierwsze wrażenia po kilku dniach obcowania z robotem do nauki programowania Photon. Robota kupiłem za pośrednictwem serwisu Kickstarter, w formie wsparcia dla projektu w lipcu 2016. Robot miał być wysyłany w styczniu 2017, niestety prace opóźniły się i otrzymałem go dopiero we wrześniu.
 
 
 Pierwsze wrażenie jakie zrobiła na mnie zabawka było bardzo pozytywne. Świetnie zaprojektowane opakowanie daje dużą satysfakcję z “unboxingu”. Sama konstrukcja sprawia wrażenie solidnej i dobrze spasowanej, nie mniej jednak nie jest to zabawka “pancerna”. Nie odważyłbym się przeprowadzić crash testu, ale mam wrażenie, że robot mógłby bardzo źle znieść upadek z wysokości jednego metra na płytki. Ciekawym dodatkiem są naklejki, za pomocą których można personalizować zabawkę, co widać na załączonym obrazku.
 
+![2017-09-25-photon_i_jas.jpg]({{site.baseurl}}/img/2017-09-25-photon_i_jas.jpg)
 
 Po zapoznaniu się z konstrukcją urządzenia przeszliśmy do aplikacji Photon Robot. Parowanie z robotem i założenie konto przebiegło bez przeszkód i przeszliśmy do pierwszego rozdziału samouczka. Jednak obsługując aplikację czułem się jakoś tak nieswojo. Najpierw sprawdziłem czy tablet ma włączone dźwięki, potem w aplikacji szukałem jakiejś konfiguracji - bezskutecznie. Następnie uruchomiłem jakąś grę, żeby sprawdzić czy na tablecie w ogóle działa głośnik! Po jakimś czasie uświadomiłem sobie w czym rzecz - aplikacja Photon Robot (jak zresztą wszystkie pozostałe) w ogóle nie jest udźwiękowiona! I o ile brak dźwięków w interfejsie jest co najmniej dziwny, ponieważ lata obcowania z aplikacjami mobilnymi przyzwyczaiły nas tego feedbacku w postaci dźwięku klikania. O tyle brak udźwiękowienia samouczka już stanowi realny problem. Jasiek (lat 4) bez problemu poradził sobie z większością zadań, niestety musiałem cały czas przez ramię czytać mu polecenia. Na pewno czytane polecenia dałyby mu dużo więcej satysfakcji z obcowania z zabawką.
 
