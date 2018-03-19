@@ -8,12 +8,9 @@ tags:
 
 > “Get your clouds right.” Dwight Schrute, The Office
 
-Nie tak dawno temu Jakub Wilczewski opublikował wyczerpujący [wstęp do programowania w AWS](http://www.consdata.pl/blog/66-aws-serverless-programming).
-tst dald  
-
 ## Konfiguracja i piersza terraformacja chmury
 
-Nie tak dawno temu Jakub Wilczewski opublikował wyczerpujący [wstęp do programowania w AWS](http://www.consdata.pl/blog/66-aws-serverless-programming). Jakub użył webowej konsoli AWS do definiowania zasobów. Jest to metoda, która sprawdza się w przypadku prezentacji czy nauki. Jednak w przypadku regularnej pracy z kodem potrzebujemy narzędzi, które umożliwią nam zautomatyzowanie procesu tworzenia a także niszczenia zasobów AWS. Chciałbym wykorzystać zaproponowaną przez niego aplikację żeby pokazać, jak można to zrobić korzystając z rozwiązania Terraform od firmy Hashicorp.
+Nie tak dawno temu Jakub Wilczewski opublikował wyczerpujący [wstęp do programowania w AWS](http://www.consdata.pl/blog/66-aws-serverless-programming). Jakub użył webowej konsoli AWS do definiowania zasobów. Jest to metoda, która sprawdza się w przypadku prezentacji czy nauki. Jednak w przypadku regularnej pracy z kodem potrzebujemy narzędzi, które umożliwią nam zautomatyzowanie procesu tworzenia a także niszczenia zasobów AWS. Wykorzystam zaproponowaną przez niego aplikację, aby pokazać, jak można to zrobić korzystając z rozwiązania Terraform od firmy Hashicorp.
 
 Firmę Hashicorp powinny kojarzyć wszyscy, którzy mieli do czynienia z rozwiązaniami chmurowymi. Stoi ona za takimi rozwiązaniami jak Vault, Consul czy Vagrant. Terraform jest ich odpowiedzią na jeden z paradygmatów kultury devops, jakim jest "infrastructure as code". 
 
@@ -22,7 +19,8 @@ Zanim przystąpimy do terraformacji chmury AWS potrzebne będą dwie binarki:
 	* https://aws.amazon.com/cli/
 	* https://www.terraform.io/downloads.html
 
-AWS CLI jest co prawda opcjonalny, ale pozwala uwolnić skrypty Terraform od danych logowania użytkownika. Żeby to osiągnąć wystarczy jednorazowo zalogować się do konsoli AWS wydając polecenie
+AWS CLI jest co prawda opcjonalny, ale pozwala uwolnić skrypty Terraform od danych logowania użytkownika. Żeby to osiągnąć wystarczy jednorazowo zalogować się do konsoli AWS wydając polecenie:
+
 ```bash
 $ aws configure
 AWS Access Key ID [None]: xxx
@@ -45,19 +43,22 @@ resource "aws_instance" "step0" {
 }
 ```
 
-Pierwsza sekcja wskazuje dostawcę usług, dlatego że AWS nie jest jedynym dostawcą zaimplementowanym w Terraform. Druga sekcja jest dyrektywą uruchomienia instancji EC2 z obrazu o identyfikatorze ami-13b8337c. Numer taki można podejrzeć w konsoli webowej AWS albo u autora konkretnej dystrybucji systemu operacyjnego, na przykład [Ubuntu](https://cloud-images.ubuntu.com/locator/ec2/).
+Pierwsza sekcja wskazuje dostawcę usług, druga jest dyrektywą uruchomienia instancji EC2 z obrazu o identyfikatorze ami-13b8337c. Numer taki można podejrzeć w konsoli webowej AWS albo u autora konkretnej dystrybucji systemu operacyjnego, na przykład [Ubuntu](https://cloud-images.ubuntu.com/locator/ec2/).
 
 W celu uruchomienia procesu tworzenia zasobów, należy wykonać sekwencje poleceń
+
 ```bash
 $ terraform init
 $ terraform plan
 $ terraform apply
 ```
-Pierwsze polecenie uruchamiamy raz w katalogu ze skryptem i spowoduje ono pobranie bibliotek koniecznych do komunikacji z dostawcą usług. Drugie polecenie wydrukuje na wyjściu plan wykonania skryptu, który warto przejrzeć aby upewnić się, co za chwilę wydarzy się gdy wydamy polecenie 'apply'. Po kilkunastu sekundach instancja powinna być uruchomiona i gotowa do pracy. Na zakończenie polecenie, które jest wisienką na torcie, czyli wycofanie wszystkich zmian wprowadzonych w poprzednim kroku.
+
+Pierwsze polecenie uruchamiamy raz w katalogu ze skryptem i spowoduje ono pobranie bibliotek koniecznych do komunikacji z dostawcą usług. Drugie polecenie wydrukuje na wyjściu plan wykonania skryptu, który zostanie uruchomiony trzecim poleceniem. Po kilkunastu sekundach instancja powinna być uruchomiona i gotowa do pracy. Na zakończenie polecenie, które jest wisienką na torcie, czyli wycofanie wszystkich zmian wprowadzonych w poprzednim kroku.
+
 ```bash
 $ terraform destroy
 ```
-W tym miejscu warto się na chwilę zatrzymać i wyjaśnić, w jaki sposób Terraform śledzi stan zmian. Po wykonaniu polecenia 'apply', w katalogu bieżącym powstanie pliki terraform.tfstate oraz jego kopia terraform.tfstate.backup. Plik ten jest zapisem stanu środowiska i od  tego momentu możliwe jest wprowadzanie zmian wyłącznie za pomocą Terraforma. Jeśli wprowadzimy zmiany z konsoli AWS, to Terraform nie będzie ich świadom. Nie ma żadnego mechanizmu odpytywania aktualnego stanu chmury. Warto o tym pamiętać pracując z Terraformem.
+W tym miejscu warto się na chwilę zatrzymać i wyjaśnić, w jaki sposób Terraform śledzi stan zmian. Po wykonaniu polecenia 'apply', w katalogu bieżącym powstanie plik terraform.tfstate oraz jego kopia terraform.tfstate.backup. Plik ten jest zapisem stanu środowiska i od  tego momentu możliwe jest wprowadzanie zmian wyłącznie za pomocą Terraforma. Jeśli wprowadzimy zmiany z konsoli AWS, to Terraform nie będzie ich śledził. Nie ma żadnego mechanizmu odpytywania aktualnego stanu chmury. Warto o tym pamiętać pracując z Terraformem.
 
 ## Skrypt dla kompletnej aplikacji
 
@@ -270,12 +271,12 @@ resource "aws_lambda_permission" "notes-get-lambda-permision" {
   statement_id = "AllowExecutionFromAPIGatewayNotesGet"
   action = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.note-find-lambda.arn}"
-  principal = "apigateway.amazonaws.com"
-  source_arn = "arn:aws:execute-api:eu-central-1:140232167620:${aws_api_gateway_rest_api.NotesAPI.id}/*/${aws_api_gateway_method.notes-get-method.http_method}/notes/{userName}"
+  principal = "apigateway.amazonaws.com"  
 }
 ```
 
 analogicznie dla POST:
+
 ```bash
 //POST IMPLEMENTATION
 
@@ -398,8 +399,7 @@ resource "aws_lambda_permission" "notes-post-lambda-permision" {
   statement_id = "AllowExecutionFromAPIGatewayNotesPost"
   action = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.note-add-lambda.arn}"
-  principal = "apigateway.amazonaws.com"
-  source_arn = "arn:aws:execute-api:eu-central-1:140232167620:${aws_api_gateway_rest_api.NotesAPI.id}/*/${aws_api_gateway_method.notes-post-method.http_method}/notes"
+  principal = "apigateway.amazonaws.com"  
 }
 ```
 
@@ -437,9 +437,9 @@ resource "aws_api_gateway_usage_plan_key" "notes-usage-plan-key" {
 }
 ```
 
-Tym samym dotarliśmy do końca przykładu. Uruchomienie skryptu spowoduje wygenerowanie całego środowiska w przeciągu sekund. Warto również przypomnieć, że jednym poleceniem możemy posprzątać po sobie usuwając wszystkie zasoby z chmury.
+Tym samym dotarliśmy do końca przykładu. Uruchomienie skryptu spowoduje wygenerowanie całego środowiska w przeciągu sekund. Warto również przypomnieć, że jednym poleceniem możemy posprzątać po sobie, usuwając wszystkie zasoby z chmury.
 
-Uważny czytelnik mógłby w tym momencie zapytać, a co w przypadku, gdy mamy wiele różnych środowisk. Albo wielu developerów współdzielących jedno konto AWS. Albo, co jest najczęstszym przypadkiem, kombinacje obu powyższych. W tej sytuacji z pomocą przychodzi nam mechanizm zmiennych środowiskowych wspierany przez Terraforma. Wystarczy taką zmienną zdefiniować a następnie użyć w nazwach wszystkich nazwanych zasobów. Trzeba także przekazać ją do wnętrza funkcji Lambda tak, aby funkcja wiedziała z którą tabelą DynamoDB ma rozmawiać. Żeby nie powielać i tak długiego skryptu, pozwolę sobie zastosować tryb zmian, żeby zobrazować sposób wprowadzanie takiej zmiennej:
+Uważny czytelnik mógłby w tym momencie zapytać, a co w przypadku, gdy mamy wiele różnych środowisk. Albo wielu developerów współdzielących jedno konto AWS. Albo, co jest najczęstszym przypadkiem, kombinację obu powyższych. W tej sytuacji z pomocą przychodzi nam mechanizm zmiennych środowiskowych wspierany przez Terraforma. Wystarczy taką zmienną zdefiniować a następnie użyć w nazwach wszystkich nazwanych zasobów. Trzeba także przekazać ją do wnętrza funkcji Lambda tak, aby funkcja wiedziała z którą tabelą DynamoDB ma rozmawiać. Żeby nie powielać i tak długiego skryptu, pozwolę sobie zastosować tryb zmian, żeby zobrazować sposób wprowadzanie takiej zmiennej:
 
 ```bash
 --- a/instance.tf
