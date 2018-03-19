@@ -30,8 +30,10 @@ AWS Secret Access Key [None]: xxx
 Default region name [None]: eu-central-1
 Default output format [None]:
 ```
+
 Jedną z najbardziej elementarnych czynności związanych z pracą z chmurą Amazonu jest utworzenie nowej "wirtualki" czyli instancji usługi EC2. Oto minimalny skrypt Terraform, który tę czynność automatyzuje:
-```json
+
+```bash
 provider "aws" {
   version = "~> 0.1"
   region = "eu-central-1"
@@ -40,7 +42,8 @@ provider "aws" {
 resource "aws_instance" "step0" {
   ami = "ami-13b8337c"
   instance_type = "t2.micro"
-}```
+}
+```
 
 Pierwsza sekcja wskazuje dostawcę usług, dlatego że AWS nie jest jedynym dostawcą zaimplementowanym w Terraform. Druga sekcja jest dyrektywą uruchomienia instancji EC2 z obrazu o identyfikatorze ami-13b8337c. Numer taki można podejrzeć w konsoli webowej AWS albo u autora konkretnej dystrybucji systemu operacyjnego, na przykład [Ubuntu](https://cloud-images.ubuntu.com/locator/ec2/).
 
@@ -70,7 +73,7 @@ zip -R note-find-lambda.zip ./note-find-lambda.js
 ```
 
 Zaczynamy od zdefiniowania dostawcy, tabeli DynamoDB oraz dwóch Lambd:
-```json
+```bash
 provider "aws" {
   version = "~> 0.1"
   region = "eu-central-1"
@@ -119,7 +122,7 @@ resource "aws_lambda_function" "note-find-lambda" {
 
 Następnie musimy wprost zdefiniować coś, co w przypadku tworzenia z poziomu konsoli web zadziało się "automagicznie", czyli uprawnienie dla Lambd do korzystania z tabeli w DynamoDB. Możemy zrobić to w następujący sposób.
 
-```json
+```bash
 resource "aws_iam_role" "iam_for_lambda" {
   name = "iam_for_lambda"
 
@@ -167,7 +170,7 @@ EOF
 Na tym etapie skrypt jest gotowy do uruchomienia i testowania z poziomu samych Lambd. Kolejnym elementem będzie wystawienia usług na świat, czyli wygenerowania całej otoczki związanej z usługą API Gateway. Elementów jest niemało, ale wszystkie one składają się na elegancki opis API wystawionego w przypadku prostej aplikacji zarządzającej notatkami.
 
 W pierwszej kolejności tworzymy elementy ścieżki URI:
-```json
+```bash
 //COMMON API
 
 resource "aws_api_gateway_rest_api" "NotesAPI" {
@@ -188,7 +191,7 @@ resource "aws_api_gateway_resource" "notes-userName-resource" {
 ```
 
 Teraz kolej na usługę GET oraz jej integrację z note-find-lambda:
-```json
+```bash
 //GET IMPLEMENTATION
 
 resource "aws_api_gateway_method" "notes-get-method" {
@@ -273,7 +276,7 @@ resource "aws_lambda_permission" "notes-get-lambda-permision" {
 ```
 
 analogicznie dla POST:
-```json
+```bash
 //POST IMPLEMENTATION
 
 resource "aws_api_gateway_request_validator" "notes-request-validator" {
@@ -402,7 +405,7 @@ resource "aws_lambda_permission" "notes-post-lambda-permision" {
 
 Na zakończenie sekcja związana z osadzeniem API i wystawieniem na zewnątrz. Ponieważ API w chwili zakończenia wykonywania skryptu zostanie wystawione na świat, warto zatroszczyć się o jego podstawowe chociaż zabezpieczenia. W dyrektywie aws_api_gateway_api_key możemy wskazać token, który będzie niezbędny do korzystania z usług. W poniższym przykładzie jest on ustawiony na stałe ale nic nie stoi na przeszkodzie, żeby go przekazać w parametrach.
 
-```json
+```bash
 resource "aws_api_gateway_deployment" "notes-deployment" {
   depends_on = [
     "aws_api_gateway_integration.notes-get-integration",
@@ -438,7 +441,7 @@ Tym samym dotarliśmy do końca przykładu. Uruchomienie skryptu spowoduje wygen
 
 Uważny czytelnik mógłby w tym momencie zapytać, a co w przypadku, gdy mamy wiele różnych środowisk. Albo wielu developerów współdzielących jedno konto AWS. Albo, co jest najczęstszym przypadkiem, kombinacje obu powyższych. W tej sytuacji z pomocą przychodzi nam mechanizm zmiennych środowiskowych wspierany przez Terraforma. Wystarczy taką zmienną zdefiniować a następnie użyć w nazwach wszystkich nazwanych zasobów. Trzeba także przekazać ją do wnętrza funkcji Lambda tak, aby funkcja wiedziała z którą tabelą DynamoDB ma rozmawiać. Żeby nie powielać i tak długiego skryptu, pozwolę sobie zastosować tryb zmian, żeby zobrazować sposób wprowadzanie takiej zmiennej:
 
-```json
+```bash
 --- a/instance.tf
 +++ b/instance.tf
 +variable "env" {
