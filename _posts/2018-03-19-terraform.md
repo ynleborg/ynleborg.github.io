@@ -30,7 +30,7 @@ Default output format [None]:
 
 Jedną z najbardziej elementarnych czynności związanych z pracą z chmurą Amazonu jest utworzenie nowej "wirtualki", czyli instancji usługi EC2. Oto minimalny skrypt Terraform, który tę czynność automatyzuje:
 
-```json
+```
 provider "aws" {
 version = "~> 0.1"
 region = "eu-central-1"
@@ -76,7 +76,7 @@ zip -R note-find-lambda.zip ./note-find-lambda.js
 
 Zaczynamy od zdefiniowania dostawcy, tabeli DynamoDB oraz dwóch Lambd:
 
-```json
+```
 provider "aws" {
 version = "~> 0.1"
 region = "eu-central-1"
@@ -125,7 +125,7 @@ memory_size = "256"
 
 Następnie musimy wprost zdefiniować coś, co w przypadku tworzenia z poziomu konsoli web zadziało się "automagicznie", czyli uprawnienie dla Lambd do korzystania z tabeli w DynamoDB. Możemy zrobić to w następujący sposób.
 
-```json
+```
 resource "aws_iam_role" "iam_for_lambda" {
 name = "iam_for_lambda"
 
@@ -174,7 +174,7 @@ Na tym etapie skrypt jest gotowy do uruchomienia i testowania z poziomu samych L
 
 W pierwszej kolejności tworzymy elementy ścieżki URI:
 
-```json
+```
 //COMMON API
 
 resource "aws_api_gateway_rest_api" "NotesAPI" {
@@ -196,7 +196,7 @@ path_part = "{userName}"
 
 Teraz kolej na usługę GET oraz jej integrację z note-find-lambda:
 
-```json
+```
 //GET IMPLEMENTATION
 
 resource "aws_api_gateway_method" "notes-get-method" {
@@ -281,7 +281,7 @@ principal = "apigateway.amazonaws.com"
 
 analogicznie dla POST:
 
-```json
+```
 //POST IMPLEMENTATION
 
 resource "aws_api_gateway_request_validator" "notes-request-validator" {
@@ -409,7 +409,7 @@ principal = "apigateway.amazonaws.com"
 
 Na zakończenie sekcja związana z osadzeniem API i wystawieniem na zewnątrz. Ponieważ API w chwili zakończenia wykonywania skryptu zostanie wystawione na świat, warto zatroszczyć się o jego podstawowe chociaż zabezpieczenia. W dyrektywie aws_api_gateway_api_key możemy wskazać token, który będzie niezbędny do korzystania z usług. W poniższym przykładzie jest on ustawiony na stałe, ale nic nie stoi na przeszkodzie, żeby go przekazać w parametrach.
 
-```json
+```
 resource "aws_api_gateway_deployment" "notes-deployment" {
 depends_on = [
 "aws_api_gateway_integration.notes-get-integration",
@@ -446,7 +446,7 @@ Tym samym dotarliśmy do końca przykładu. Uruchomienie skryptu spowoduje wygen
 Uważny czytelnik mógłby w tym momencie zapytać - "a co w przypadku, gdy mamy wiele środowisk?". I będzie to słuszne pytanie - powyższy przykład nie zadziała poprawnie w takiej sytuacji. Podobnie jak w przypadku wielu developerów współdzielących jedno konto AWS. Albo, co jest najczęstszym przypadkiem, kombinacją obu powyższych. W tej sytuacji, z pomocą przychodzi nam mechanizm zmiennych środowiskowych, wspierany przez Terraforma. Wystarczy taką zmienną zdefiniować, a następnie użyć w nazwach wszystkich nazwanych zasobów. Trzeba także przekazać ją do wnętrza funkcji Lambda tak, aby funkcja wiedziała, z którą tabelą DynamoDB ma rozmawiać. Żeby nie powielać i tak długiego skryptu, pozwolę sobie zastosować tryb zmian, żeby zobrazować sposób wprowadzania takiej zmiennej:
 
 
-```json
+```
 --- a/instance.tf
 +++ b/instance.tf
 +variable "env" {
