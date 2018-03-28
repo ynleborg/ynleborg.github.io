@@ -32,13 +32,13 @@ Jedną z najbardziej elementarnych czynności związanych z pracą z chmurą Ama
 
 ```
 provider "aws" {
-version = "~> 0.1"
-region = "eu-central-1"
+  version = "~> 0.1"
+  region = "eu-central-1"
 }
 
 resource "aws_instance" "step0" {
-ami = "ami-13b8337c"
-instance_type = "t2.micro"
+  ami = "ami-13b8337c"
+  instance_type = "t2.micro"
 }
 ```
 
@@ -78,48 +78,48 @@ Zaczynamy od zdefiniowania dostawcy, tabeli DynamoDB oraz dwóch Lambd:
 
 ```
 provider "aws" {
-version = "~> 0.1"
-region = "eu-central-1"
+  version = "~> 0.1"
+  region = "eu-central-1"
 }
 
 resource "aws_dynamodb_table" "notes-table" {
-name = "notes"
-read_capacity = 1
-write_capacity = 1
-hash_key = "userName"
-range_key = "timestamp"
+  name = "notes"
+  read_capacity = 1
+  write_capacity = 1
+  hash_key = "userName"
+  range_key = "timestamp"
 
-attribute {
-name = "userName"
-type = "S"
-}
+  attribute {
+    name = "userName"
+    type = "S"
+  }
 
-attribute {
-name = "timestamp"
-type = "N"
-}
+  attribute {
+    name = "timestamp"
+    type = "N"
+  }
 }
 
 resource "aws_lambda_function" "note-add-lambda" {
-filename = "note-add-lambda.zip"
-function_name = "note-add-lambda"
-role = "${aws_iam_role.iam_for_lambda.arn}"
-handler = "note-add-lambda.handler"
-source_code_hash = "${base64sha256(file("note-add-lambda.zip"))}"
-runtime = "nodejs6.10"
-timeout = "10"
-memory_size = "256"
+  filename = "note-add-lambda.zip"
+  function_name = "note-add-lambda"
+  role = "${aws_iam_role.iam_for_lambda.arn}"
+  handler = "note-add-lambda.handler"
+  source_code_hash = "${base64sha256(file("note-add-lambda.zip"))}"
+  runtime = "nodejs6.10"
+  timeout = "10"
+  memory_size = "256"
 }
 
 resource "aws_lambda_function" "note-find-lambda" {
-filename = "note-find-lambda.zip"
-function_name = "note-find-lambda"
-role = "${aws_iam_role.iam_for_lambda.arn}"
-handler = "note-find-lambda.handler"
-source_code_hash = "${base64sha256(file("note-find-lambda.zip"))}"
-runtime = "nodejs6.10"
-timeout = "10"
-memory_size = "256"
+  filename = "note-find-lambda.zip"
+  function_name = "note-find-lambda"
+  role = "${aws_iam_role.iam_for_lambda.arn}"
+  handler = "note-find-lambda.handler"
+  source_code_hash = "${base64sha256(file("note-find-lambda.zip"))}"
+  runtime = "nodejs6.10"
+  timeout = "10"
+  memory_size = "256"
 }
 ```
 
@@ -127,44 +127,44 @@ Następnie musimy wprost zdefiniować coś, co w przypadku tworzenia z poziomu k
 
 ```
 resource "aws_iam_role" "iam_for_lambda" {
-name = "iam_for_lambda"
+  name = "iam_for_lambda"
 
-assume_role_policy = EOF
-{
-"Version": "2012-10-17",
-"Statement": [
-{
-"Action": "sts:AssumeRole",
-"Principal": {
-"Service": "lambda.amazonaws.com"
-},
-"Effect": "Allow",
-"Sid": ""
-}
-]
+  assume_role_policy = EOF
+  {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
 }
 EOF
 }
 
 resource "aws_iam_role_policy" "role_policy_for_dynamodb_access" {
-name = "role_policy_for_dynamodb_access"
-role = "${aws_iam_role.iam_for_lambda.id}"
+  name = "role_policy_for_dynamodb_access"
+  role = "${aws_iam_role.iam_for_lambda.id}"
 
 policy = EOF
 {
-"Version": "2012-10-17",
-"Statement": [
-{
-"Sid": "AccessAllNotes",
-"Effect": "Allow",
-"Action": [
-"dynamodb:*"
-],
-"Resource": [
-"*"
-]
-}
-]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AccessAllNotes",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:*"
+      ],
+      "Resource": [
+        "*"
+      ]
+    }
+  ]
 }
 EOF
 }
@@ -178,19 +178,19 @@ W pierwszej kolejności tworzymy elementy ścieżki URI:
 //COMMON API
 
 resource "aws_api_gateway_rest_api" "NotesAPI" {
-name = "NotesAPI"
+  name = "NotesAPI"
 }
 
 resource "aws_api_gateway_resource" "notes-resource" {
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-parent_id = "${aws_api_gateway_rest_api.NotesAPI.root_resource_id}"
-path_part = "notes"
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  parent_id = "${aws_api_gateway_rest_api.NotesAPI.root_resource_id}"
+  path_part = "notes"
 }
 
 resource "aws_api_gateway_resource" "notes-userName-resource" {
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-parent_id = "${aws_api_gateway_resource.notes-resource.id}"
-path_part = "{userName}"
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  parent_id = "${aws_api_gateway_resource.notes-resource.id}"
+  path_part = "{userName}"
 }
 ```
 
@@ -200,82 +200,82 @@ Teraz kolej na usługę GET oraz jej integrację z note-find-lambda:
 //GET IMPLEMENTATION
 
 resource "aws_api_gateway_method" "notes-get-method" {
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-resource_id = "${aws_api_gateway_resource.notes-userName-resource.id}"
-http_method = "GET"
-authorization = "NONE"
-api_key_required = true
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  resource_id = "${aws_api_gateway_resource.notes-userName-resource.id}"
+  http_method = "GET"
+  authorization = "NONE"
+  api_key_required = true
 }
 
 resource "aws_api_gateway_method_response" "notes-get-method-response-ok-200" {
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-resource_id = "${aws_api_gateway_resource.notes-userName-resource.id}"
-http_method = "${aws_api_gateway_method.notes-get-method.http_method}"
-status_code = "200"
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  resource_id = "${aws_api_gateway_resource.notes-userName-resource.id}"
+  http_method = "${aws_api_gateway_method.notes-get-method.http_method}"
+  status_code = "200"
 }
 
 resource "aws_api_gateway_method_response" "notes-get-method-response-not-found-error-404" {
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-resource_id = "${aws_api_gateway_resource.notes-userName-resource.id}"
-http_method = "${aws_api_gateway_method.notes-get-method.http_method}"
-status_code = "404"
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  resource_id = "${aws_api_gateway_resource.notes-userName-resource.id}"
+  http_method = "${aws_api_gateway_method.notes-get-method.http_method}"
+  status_code = "404"
 }
 
 resource "aws_api_gateway_integration" "notes-get-integration" {
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-resource_id = "${aws_api_gateway_resource.notes-userName-resource.id}"
-http_method = "${aws_api_gateway_method.notes-get-method.http_method}"
-integration_http_method = "POST"
-type = "AWS"
-uri = "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${aws_lambda_function.note-find-lambda.arn}/invocations"
-request_templates {
-"application/json" = EOF
-{
-"userName": "$input.params('userName')"
-}
-EOF
-}
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  resource_id = "${aws_api_gateway_resource.notes-userName-resource.id}"
+  http_method = "${aws_api_gateway_method.notes-get-method.http_method}"
+  integration_http_method = "POST"
+  type = "AWS"
+  uri = "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${aws_lambda_function.note-find-lambda.arn}/invocations"
+    request_templates {
+      "application/json" = EOF
+      {
+       "userName": "$input.params('userName')"
+      }
+      EOF
+   }
 }
 
 resource "aws_api_gateway_integration_response" "notes-get-integration-response" {
-depends_on = [
-"aws_api_gateway_integration.notes-get-integration"]
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-resource_id = "${aws_api_gateway_resource.notes-userName-resource.id}"
-http_method = "${aws_api_gateway_method.notes-get-method.http_method}"
-status_code = "${aws_api_gateway_method_response.notes-get-method-response-ok-200.status_code}"
-response_templates {
-"application/json" = EOF
-#set($inputRoot = $input.path('$'))
-$inputRoot.Items
-EOF
-}
+  depends_on = [
+   "aws_api_gateway_integration.notes-get-integration"]
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  resource_id = "${aws_api_gateway_resource.notes-userName-resource.id}"
+  http_method = "${aws_api_gateway_method.notes-get-method.http_method}"
+  status_code = "${aws_api_gateway_method_response.notes-get-method-response-ok-200.status_code}"
+  response_templates {
+   "application/json" = EOF
+    #set($inputRoot = $input.path('$'))
+   $inputRoot.Items
+   EOF
+  }
 }
 
 resource "aws_api_gateway_integration_response" "notes-get-integration-response-user-does-not-exist" {
-depends_on = [
-"aws_api_gateway_integration.notes-get-integration"]
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-resource_id = "${aws_api_gateway_resource.notes-userName-resource.id}"
-http_method = "${aws_api_gateway_method.notes-get-method.http_method}"
-status_code = "${aws_api_gateway_method_response.notes-get-method-response-not-found-error-404.status_code}"
-selection_pattern = ".*errorCode\":\"USER_DOES_NOT_EXIST.*"
-response_templates {
-"application/json" = EOF
-#set ($errorMessageObj = $util.parseJson($input.path('$.errorMessage')))
-{
-"errorCode" : "$errorMessageObj.errorCode",
-"message" : "$errorMessageObj.message"
-}
-EOF
-}
+  depends_on = [
+    "aws_api_gateway_integration.notes-get-integration"]
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  resource_id = "${aws_api_gateway_resource.notes-userName-resource.id}"
+  http_method = "${aws_api_gateway_method.notes-get-method.http_method}"
+  status_code = "${aws_api_gateway_method_response.notes-get-method-response-not-found-error-404.status_code}"
+  selection_pattern = ".*errorCode\":\"USER_DOES_NOT_EXIST.*"
+  response_templates {
+  "application/json" = EOF
+    #set ($errorMessageObj = $util.parseJson($input.path('$.errorMessage')))
+    {
+      "errorCode" : "$errorMessageObj.errorCode",
+      "message" : "$errorMessageObj.message"
+    }
+    EOF
+  }
 }
 
 resource "aws_lambda_permission" "notes-get-lambda-permision" {
-statement_id = "AllowExecutionFromAPIGatewayNotesGet"
-action = "lambda:InvokeFunction"
-function_name = "${aws_lambda_function.note-find-lambda.arn}"
-principal = "apigateway.amazonaws.com" 
+  statement_id = "AllowExecutionFromAPIGatewayNotesGet"
+  action = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.note-find-lambda.arn}"
+  principal = "apigateway.amazonaws.com" 
 }
 ```
 
@@ -285,125 +285,125 @@ analogicznie dla POST:
 //POST IMPLEMENTATION
 
 resource "aws_api_gateway_request_validator" "notes-request-validator" {
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-name = "NotesRequestValidator"
-validate_request_body = true
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  name = "NotesRequestValidator"
+  validate_request_body = true
 }
 
 resource "aws_api_gateway_model" "notes-model" {
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-name = "NotesRequestModel"
-content_type = "application/json"
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  name = "NotesRequestModel"
+  content_type = "application/json"
 
-schema = EOF
-{
-"$schema": "http://json-schema.org/draft-04/schema#",
-"description": "",
-"type": "object",
-"properties": {
-"userName": {
-"type": "string",
-"minLength": 1
-},
-"content": {
-"type": "string",
-"minLength": 1
-}
-},
-"required": [
-"userName",
-"content"
-]
+  schema = EOF
+  {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "",
+    "type": "object",
+    "properties": {
+      "userName": {
+        "type": "string",
+        "minLength": 1
+      },
+      "content": {
+        "type": "string",
+        "minLength": 1
+      }
+  },
+  "required": [
+  "userName",
+  "content"
+  ]
 }
 EOF
 }
 
 resource "aws_api_gateway_method" "notes-post-method" {
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-resource_id = "${aws_api_gateway_resource.notes-resource.id}"
-http_method = "POST"
-authorization = "NONE"
-api_key_required = true
-request_models = {
-"application/json" = "NotesRequestModel"
-}
-request_validator_id = "${aws_api_gateway_request_validator.notes-request-validator.id}"
-depends_on = [
-"aws_api_gateway_model.notes-model"]
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  resource_id = "${aws_api_gateway_resource.notes-resource.id}"
+  http_method = "POST"
+  authorization = "NONE"
+  api_key_required = true
+  request_models = {
+    "application/json" = "NotesRequestModel"
+  }
+  request_validator_id = "${aws_api_gateway_request_validator.notes-request-validator.id}"
+  depends_on = [
+    "aws_api_gateway_model.notes-model"]
 }
 
 resource "aws_api_gateway_method_response" "notes-post-method-response-created-201" {
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-resource_id = "${aws_api_gateway_resource.notes-resource.id}"
-http_method = "${aws_api_gateway_method.notes-post-method.http_method}"
-status_code = "201"
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  resource_id = "${aws_api_gateway_resource.notes-resource.id}"
+  http_method = "${aws_api_gateway_method.notes-post-method.http_method}"
+  status_code = "201"
 }
 
 resource "aws_api_gateway_method_response" "notes-post-method-response-create-400" {
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-resource_id = "${aws_api_gateway_resource.notes-resource.id}"
-http_method = "${aws_api_gateway_method.notes-post-method.http_method}"
-status_code = "400"
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  resource_id = "${aws_api_gateway_resource.notes-resource.id}"
+  http_method = "${aws_api_gateway_method.notes-post-method.http_method}"
+  status_code = "400"
 }
 
 
 resource "aws_api_gateway_integration" "notes-post-integration" {
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-resource_id = "${aws_api_gateway_resource.notes-resource.id}"
-http_method = "${aws_api_gateway_method.notes-post-method.http_method}"
-integration_http_method = "POST"
-type = "AWS"
-uri = "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${aws_lambda_function.note-add-lambda.arn}/invocations"
-request_templates {
-"application/json" = EOF
-{
-"userName" : $input.json('$.userName'),
-"content" : $input.json('$.content')
-}
-EOF
-}
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  resource_id = "${aws_api_gateway_resource.notes-resource.id}"
+  http_method = "${aws_api_gateway_method.notes-post-method.http_method}"
+  integration_http_method = "POST"
+  type = "AWS"
+  uri = "arn:aws:apigateway:eu-central-1:lambda:path/2015-03-31/functions/${aws_lambda_function.note-add-lambda.arn}/invocations"
+  request_templates {
+    "application/json" = EOF
+  {
+    "userName" : $input.json('$.userName'),
+    "content" : $input.json('$.content')
+  }
+  EOF
+  }
 }
 
 
 resource "aws_api_gateway_integration_response" "notes-post-integration-response" {
 depends_on = [
-"aws_api_gateway_integration.notes-post-integration"]
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-resource_id = "${aws_api_gateway_resource.notes-resource.id}"
-http_method = "${aws_api_gateway_method.notes-post-method.http_method}"
-status_code = "${aws_api_gateway_method_response.notes-post-method-response-created-201.status_code}"
-response_templates {
-"application/json" = EOF
-#set($inputRoot = $input.path('$'))
-$inputRoot
-EOF
-}
+  "aws_api_gateway_integration.notes-post-integration"]
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  resource_id = "${aws_api_gateway_resource.notes-resource.id}"
+  http_method = "${aws_api_gateway_method.notes-post-method.http_method}"
+  status_code = "${aws_api_gateway_method_response.notes-post-method-response-created-201.status_code}"
+  response_templates {
+    "application/json" = EOF
+    #set($inputRoot = $input.path('$'))
+    $inputRoot
+    EOF
+  }
 }
 
 resource "aws_api_gateway_integration_response" "notes-post-integration-response-error-400" {
-depends_on = [
-"aws_api_gateway_integration.notes-post-integration"]
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-resource_id = "${aws_api_gateway_resource.notes-resource.id}"
-http_method = "${aws_api_gateway_method.notes-post-method.http_method}"
-status_code = "${aws_api_gateway_method_response.notes-post-method-response-create-400.status_code}"
-selection_pattern = ".*errorCode.*"
-response_templates {
-"application/json" = EOF
-#set ($errorMessageObj = $util.parseJson($input.path('$.errorMessage')))
-{
-"errorCode" : "$errorMessageObj.errorCode",
-"message" : "$errorMessageObj.message"
-}
-EOF
-}
+  depends_on = [
+   "aws_api_gateway_integration.notes-post-integration"]
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  resource_id = "${aws_api_gateway_resource.notes-resource.id}"
+  http_method = "${aws_api_gateway_method.notes-post-method.http_method}"
+  status_code = "${aws_api_gateway_method_response.notes-post-method-response-create-400.status_code}"
+  selection_pattern = ".*errorCode.*"
+  response_templates {
+    "application/json" = EOF
+    #set ($errorMessageObj = $util.parseJson($input.path('$.errorMessage')))
+    {
+      "errorCode" : "$errorMessageObj.errorCode",
+      "message" : "$errorMessageObj.message"
+    }
+    EOF
+  }
 }
 
 resource "aws_lambda_permission" "notes-post-lambda-permision" {
-statement_id = "AllowExecutionFromAPIGatewayNotesPost"
-action = "lambda:InvokeFunction"
-function_name = "${aws_lambda_function.note-add-lambda.arn}"
-principal = "apigateway.amazonaws.com" 
+  statement_id = "AllowExecutionFromAPIGatewayNotesPost"
+  action = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.note-add-lambda.arn}"
+  principal = "apigateway.amazonaws.com" 
 }
 ```
 
@@ -411,33 +411,33 @@ Na zakończenie sekcja związana z osadzeniem API i wystawieniem na zewnątrz. P
 
 ```
 resource "aws_api_gateway_deployment" "notes-deployment" {
-depends_on = [
-"aws_api_gateway_integration.notes-get-integration",
-"aws_api_gateway_integration.notes-post-integration"
-]
-rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-stage_name = "test"
+  depends_on = [
+    "aws_api_gateway_integration.notes-get-integration",
+    "aws_api_gateway_integration.notes-post-integration"
+  ]
+  rest_api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+  stage_name = "test"
 }
 
 resource "aws_api_gateway_usage_plan" "notes-usage-plan" {
-name = "NotesUsagePlan"
-description = "Notes usage plan"
+  name = "NotesUsagePlan"
+  description = "Notes usage plan"
 
-api_stages {
-api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
-stage = "${aws_api_gateway_deployment.notes-deployment.stage_name}"
-}
+  api_stages {
+    api_id = "${aws_api_gateway_rest_api.NotesAPI.id}"
+    stage = "${aws_api_gateway_deployment.notes-deployment.stage_name}"
+  }
 }
 
 resource "aws_api_gateway_api_key" "notes-api-key" {
-name = "NotesApiKey"
-value = "NtMLWD6CG49mgtbpcWTmd5jCtkSyUvow9LMV5KMf"
+  name = "NotesApiKey"
+  value = "NtMLWD6CG49mgtbpcWTmd5jCtkSyUvow9LMV5KMf"
 }
 
 resource "aws_api_gateway_usage_plan_key" "notes-usage-plan-key" {
-key_id = "${aws_api_gateway_api_key.notes-api-key.id}"
-key_type = "API_KEY"
-usage_plan_id = "${aws_api_gateway_usage_plan.notes-usage-plan.id}"
+  key_id = "${aws_api_gateway_api_key.notes-api-key.id}"
+  key_type = "API_KEY"
+  usage_plan_id = "${aws_api_gateway_usage_plan.notes-usage-plan.id}"
 }
 ```
 
