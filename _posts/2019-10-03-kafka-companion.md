@@ -11,16 +11,16 @@ tags:
   - tool
 ---
 
-Stalo się standardem, że współczesne narzędzia i biblioteki i dystrybuowane są z mniej lub bardziej zaawansowanym interfejsem graficznym. RabbitMQ, będący najpopularniejszym obecnie systemem kolejkowym, witam nas po zainstalowaniu przejrzystym i funkcjonalnym panelem administracyjnym. Może więc budzić zdziwienie, że Apache Kafka nie została wyposażona w żadne GUI. Do dyspozycji dostajemy jedynie zestaw skryptów bashowych, które co prawda pozwalają wykonać wiele czynności administracyjnych, to jednak korzystanie z nich nie należy do przyjemnych. Sprawiają wrażenie pisanych przez różne zespoły developerskie, ponieważ te same parametry potrafią mieć inne nazwy. W dodatku skrypty są bezstanowe - każde wywołanie musi mieć pełen zestaw parametrów identyfikujących serwer i zasoby do których chcemy się odwołać. Naturalnym jest zatem, że do wygodnej i wydajnej pracy warto wdrożyć rozwiązanie, które pozwala w łatwy sposób podejrzeć stan serwera oraz topików na Kafce. Z kolei ze względu na prostotę testowania i diagnostyki warto mieć łatwą możliwość dodawania nowych komunikatów.  
+Stalo się standardem, że współczesne narzędzia i biblioteki dystrybuowane są z mniej lub bardziej zaawansowanym interfejsem graficznym. RabbitMQ, będący najpopularniejszym obecnie systemem kolejkowym, wita nas po zainstalowaniu przejrzystym i funkcjonalnym panelem administracyjnym. Może więc budzić zdziwienie, że Apache Kafka nie została wyposażona w żadne GUI. Do dyspozycji dostajemy jedynie zestaw skryptów bashowych, które co prawda pozwalają wykonać wiele czynności administracyjnych, to jednak korzystanie z nich nie należy do przyjemnych. Sprawiają wrażenie pisanych przez różne zespoły developerskie, ponieważ te same parametry potrafią mieć inne nazwy. W dodatku skrypty są bezstanowe - każde wywołanie musi mieć pełen zestaw parametrów identyfikujących serwer i zasoby do których chcemy się odwołać. Naturalnym jest zatem, że do wygodnej i wydajnej pracy warto wdrożyć rozwiązanie, które pozwala w łatwy sposób podejrzeć stan serwera oraz topików na Kafce. Z kolei ze względu na prostotę testowania i diagnostyki, warto mieć możliwość dodawania nowych komunikatów.  
 
 ## Dlaczego piszemy własne narzędzie
-Poszukując administracyjnego frontendu do naszej Kafki, zainstalowaliśmy i przetestowaliśmy szereg darmowych dostępnych w sieci aplikacji. Niestety żadna z nich nie spełniła wszystkich wyspecyfikowanych wymagań. Nie pozostało nam zatem nic innego, jak przygotować własne narzędzie. Tak oto powstał Kafka Companion. Uważni czytelnicy naszego bloga zauważą pewnie, że nie jest to pierwszy Companion, który powstał w naszej firmie. Podobne pobudki doprowadziły chociażby do implementacji SQCompaniona, o którym pisał Grzegorz Lipecki w artykule [Monitorowanie zespołowych trendów jakości kodu](https://blog.consdata.tech/2018/02/22/monitorowanie-zespolowych-trendow-jakosci-kodu.html)
+Poszukując administracyjnego frontendu do naszej Kafki, zainstalowaliśmy i przetestowaliśmy szereg dostępnych w sieci darmowych aplikacji. Niestety żadna z nich nie spełniła wszystkich wyspecyfikowanych wymagań. Nie pozostało nam zatem nic innego, jak przygotować własne narzędzie. Tak oto powstał Kafka Companion. Uważni czytelnicy naszego bloga zauważą pewnie, że nie jest to pierwszy Companion, który powstał w naszej firmie. Podobne pobudki doprowadziły chociażby do implementacji SQCompaniona, o którym pisał Grzegorz Lipecki w artykule [Monitorowanie zespołowych trendów jakości kodu](https://blog.consdata.tech/2018/02/22/monitorowanie-zespolowych-trendow-jakosci-kodu.html)
    
 ## Podstawowe funkcjonalności
 Aplikacja podzielona jest na trzy moduły dostarczające istotnych funkcjonalności podczas codziennej pracy developerskiej z Kafką.
 
 ### Podgląd kondycji klastra
-Ekranem od którego należałoby rozpocząć, jest lista wszystkich węzłów w klastrze. Znając topologię możemy upewnić się, czy wszystkie węzły klastra są żywe oraz jakie mają identyfikatory.
+Ekranem, od którego należałoby rozpocząć, jest lista wszystkich węzłów w klastrze. Znając topologię możemy upewnić się, czy węzły klastra są żywe oraz jakie mają identyfikatory.
 ![2019-10-03-kafka-companion_brokers.png](/assets/img/posts/2019-10-03-kafka-companion/2019-10-03-kafka-companion_brokers.png)
 
 ### Podgląd i dodawanie wiadomości do topiku
@@ -34,7 +34,7 @@ W każdej chwili możemy zarzucić topik dowolną liczbą wiadomości. Wprowadzi
 Ostatnim ekranem jest podgląd grup konsumentów.
 ![2019-10-03-kafka-companion_consumers_list.png](/assets/img/posts/2019-10-03-kafka-companion/2019-10-03-kafka-companion_consumers_list.png)
 
- Dowiadujemy się z niego kto konsumuje wiadomości w topików oraz, co bardzo ważne, czy wiadomości są konsumowane na bieżąco. 
+ Dowiadujemy się z niego kto konsumuje wiadomości z topików oraz, co bardzo ważne, czy wiadomości są konsumowane na bieżąco. 
 ![2019-10-03-kafka-companion_consumers_details.png](/assets/img/posts/2019-10-03-kafka-companion/2019-10-03-kafka-companion_consumers_details.png)
 
 ## Podsumowanie
