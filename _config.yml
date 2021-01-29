@@ -23,7 +23,7 @@ description: O programowaniu żartem i na serio.
 
 # List of links in the navigation bar
 navbar-links:
-  O mnie: "aboutme"  
+  O mnie: "aboutme"
   Inny blog: "http://ynleborg.pl"
 
 # Image to show in the navigation bar - image must be a square (width = height)
@@ -36,36 +36,30 @@ avatar: "/img/awatar-100x150.jpg"
 # Important: you must keep the "name" parameter, everything else you can remove
 author:
   name: Jacek Grobelny
-  email: "jacek.grobelny+blog@domain.com"
+  email: "jacek.grobelny@gmail.com"
   facebook: jacek.grobelny  # eg. daattali
   github: ynleborg    # eg. daattali
   twitter: ynleborg   # eg. daattali
-  reddit: yourname    # eg. daattali
-  google-plus: +JacekGrobelny   # eg. +DeanAttali or 109424658772469020925
+  reddit: ynleborg    # eg. daattali
   linkedin: jacek-grobelny-95425821  # eg. daattali
-  xing: yourname      # eg. daattali
-  stackoverflow: yourlink  # eg. "3943160/daattali"
-  snapchat: yourname  # eg. daattali
-  instagram: yourname # eg. daattali
-  youtube: yourlink   # eg. user/daattali or channel/daattali
-  spotify: yourname   # eg. daattali
+  stackoverflow: 7354710/jacek-grobelny  # eg. "3943160/daattali"
+  instagram: ynleborg # eg. daattali
+  youtube: channel/UCqKWU9O0iNyNBMKR2TgN50w   # eg. user/daattali or channel/daattali
+  spotify: ynleborg   # eg. daattali
 
 # Select which links to show in the footer
 footer-links-active:
   rss: true
+  email: false
   facebook: true
-  email: true
-  twitter: true
-  google-plus: true
   github: true
-  reddit: false
-  linkedin: false
-  xing: false
-  stackoverflow: false
-  snapchat: false
-  instagram: false
-  youtube: false
-  spotify: false
+  twitter: true
+  reddit: true
+  linkedin: true
+  stackoverflow: true
+  instagram: true
+  youtube: true
+  spotify: true
 
 # Select which share links to show in posts
 share-links-active:
@@ -180,6 +174,7 @@ prose:
 
 gems:
   - jekyll-paginate
-
+  - jekyll-seo-tag
 # Beautiful Jekyll / Dean Attali
 # 2fc73a3a967e97599c9763d05e564189
+
